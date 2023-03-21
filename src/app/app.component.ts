@@ -30,9 +30,10 @@ export class AppComponent {
   }
 
   onSubmit() {
+    const search = this.form.get('search')?.value;
     if (!this.form.valid) {
       console.log('min length required (3) ou special char not allowed')
-      this.error = 'min length required (3) ou special char not allowed';
+      this.error = search ? 'min length required (3) ou special char not allowed' : '';
       this.searchResult = [];
       return;
     }
@@ -42,7 +43,6 @@ export class AppComponent {
     this.form.disable();
     this.searchResult = [];
     this.loadingResult = true;
-    const search = this.form.get('search')?.value;
 
     this.apiService.getData(1).subscribe({
       next: result => {
@@ -66,6 +66,7 @@ export class AppComponent {
     forkJoin(call).subscribe({
       next: result => {
         this.searchResult = this.findInValues(result.map(result => result.data).flat(), q);
+        this.error = '';
         this.form.enable();
         this.loadingResult = false;
         this.input.nativeElement.focus();
